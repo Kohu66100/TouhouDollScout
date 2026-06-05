@@ -1,0 +1,1126 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>人形劇スカウト</title>
+
+<style>
+body{
+    font-family: 'Helvetica Neue', Arial, sans-serif;
+    background-color: #f5f7fa;
+    color: #333;
+    text-align:center;
+    max-width:900px;
+    margin:auto;
+    padding:20px;
+}
+
+h1 {
+    color: #2c3e50;
+    margin-bottom: 30px;
+}
+
+/* フォーム・設定エリア */
+#startArea, #patchArea, #scoutOptionArea, #filterArea, #generationArea, #optionArea {
+    background: white;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+    margin-bottom: 20px;
+}
+
+#filterArea, #generationArea, #optionArea {
+    text-align: center;
+    max-width: 600px;
+    margin: 0 auto 20px auto;
+}
+
+#patchArea {
+    text-align: center;
+    max-width: 400px;
+    margin: 0 auto 20px auto;
+}
+
+#scoutOptionArea {
+    text-align: right;
+    max-width: 300px;
+    margin: 0 auto 20px auto;
+}
+
+#filterArea h3, #generationArea h3, #optionArea h3, #patchArea h3 {
+    margin-top: 0;
+    margin-bottom: 15px;
+    color: #2c3e50;
+    font-size: 16px;
+    border-bottom: 2px solid #3498db;
+    padding-bottom: 5px;
+}
+
+.filter-group {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: flex-start;
+    max-width: 450px;
+    margin: 0 auto;
+    gap: 15px;
+}
+
+.generation-group {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: flex-start;
+    max-width: 450px;
+    margin: 0 auto;
+    gap: 15px;
+}
+
+/* 任意の場所で改行させるためのクラス */
+.break {
+    flex-basis: 100%;
+    height: 0;
+}
+
+.option-group {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    max-width: 400px;
+    margin: 0 auto;
+    gap: 12px;
+}
+
+.filter-label, .option-label {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    cursor: pointer;
+    font-size: 15px;
+}
+
+#username {
+    padding: 12px 20px;
+    font-size: 16px;
+    border: 2px solid #ddd;
+    border-radius: 6px;
+    outline: none;
+    transition: border-color 0.2s;
+    width: 200px;
+}
+#username:focus {
+    border-color: #3498db;
+}
+
+select {
+    padding: 10px 15px;
+    font-size: 16px;
+    border-radius: 6px;
+    border: 2px solid #ddd;
+}
+
+/* アクションボタン（はじめる・コピー・やりなおす） */
+#startButton, #copyButton, #retryButton {
+    color: white;
+    border: none;
+    padding: 12px 28px;
+    font-size: 18px;
+    font-weight: bold;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: all 0.1s ease;
+    margin: 10px auto;
+}
+
+#startButton {
+    background-color: #3498db;
+    box-shadow: 0 4px 0 #2980b9;
+}
+#startButton:active {
+    transform: translateY(4px);
+    box-shadow: 0 0px 0 #2980b9;
+}
+
+#copyButton {
+    background-color: #3498db;
+    box-shadow: 0 4px 0 #2980b9;
+}
+#copyButton:active {
+    transform: translateY(4px);
+    box-shadow: 0 0px 0 #2980b9;
+}
+
+#retryButton {
+    background-color: #e67e22;
+    box-shadow: 0 4px 0 #d35400;
+    display: block; /* ボタン同士がくっつかないようブロック化 */
+}
+#retryButton:active {
+    transform: translateY(4px);
+    box-shadow: 0 0px 0 #d35400;
+}
+
+/* 選択肢（カードレイアウト） */
+#choices {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 20px;
+    margin: 30px 0;
+}
+
+/* 進行状況テキスト */
+#round {
+    font-weight: bold;
+    margin-bottom: 10px;
+}
+
+#resultDisplay {
+    display: grid;
+    grid-template-columns: repeat(6, 1fr);
+    gap: 15px;
+    max-width: 900px;
+    margin: 15px auto 5px auto;
+    padding: 10px;
+}
+
+.chara-card {
+    position: relative;
+    border: 2px solid transparent; 
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.08);
+    width: 120px;
+    padding: 15px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    transition: all 0.2s;
+}
+
+#resultDisplay .chara-card {
+    width: auto;
+}
+
+#choices .chara-card:hover {
+    border-color: #3498db;
+    box-shadow: 0 4px 15px rgba(52, 152, 219, 0.3);
+}
+
+#choices .chara-card:hover button {
+    background-color: #2980b9;
+    box-shadow: 0 3px 0 #1f618d;
+    transform: scale(1.03);
+}
+
+.chara-card button {
+    width: 100%;
+    background-color: #34495e;
+    color: white;
+    border: none;
+    padding: 10px;
+    font-size: 16px;
+    font-weight: bold;
+    border-radius: 6px;
+    cursor: pointer;
+    box-shadow: 0 3px 0 #2c3e50;
+    margin-bottom: 10px;
+    transition: all 0.1s;
+    line-height: 1.3;
+}
+
+#choices .chara-card button:active {
+    transform: translateY(3px);
+    box-shadow: 0 0px 0 #2c3e50;
+}
+
+/* 画像エリアをまとめるコンテナ（ここを基準にアイコンを配置） */
+.img-container {
+    position: relative;
+    width: 110px;
+    height: 110px;
+    margin-bottom: 8px;
+}
+
+.chara-img {
+    width: 110px;
+    height: 110px;
+    object-fit: contain;
+    margin-bottom: 8px;
+    background-color: transparent;
+    border-radius: 8px;
+    position: relative;
+    z-index: 2;
+}
+
+/*スタイルアイコン用 */
+.style-icon {
+    position: absolute;
+    bottom: -16px;
+    left: -16px;
+    width: 48px;
+    height: 48px;
+    object-fit: contain;
+    z-index: 3;
+}
+
+.type-container {
+    display: flex;
+    gap: 4px;
+    margin-bottom: 12px;
+    justify-content: center;
+    width: 100%;
+}
+
+.type-badge {
+    font-size: 11px;
+    font-weight: bold;
+    color: white;
+    padding: 3px 0;
+    width: 55px;
+    text-align: center;
+    border-radius: 4px;
+    text-shadow: 1px 1px 1px rgba(0,0,0,0.3);
+    box-shadow: inset 0 -1px 2px rgba(0,0,0,0.2);
+    z-index: 5;
+}
+
+/* タイプカラー定義 */
+.type-ほのお { background-color: #ff9c54; }
+.type-みず { background-color: #4f90d5; }
+.type-しぜん { background-color: #63bb5b; }
+.type-でんき { background-color: #f3d23b; }
+.type-こおり { background-color: #74cec0; }
+.type-ゆめ { background-color: #b8b774; }
+.type-しょうき { background-color: #ab6ac8; }
+.type-だいち { background-color: #d97746; }
+.type-ひこう { background-color: #8fa8dd; }
+.type-ことわり { background-color: #f95587; }
+.type-かぜ { background-color: #87c639; }
+.type-けもの { background-color: #907939; }
+.type-おばけ { background-color: #5269ac; }
+.type-しんとう { background-color: #e8b51c; }
+.type-あんこく { background-color: #5a5366; }
+.type-はがね { background-color: #5a8ea1; }
+.type-こころ { background-color: #fa90ba; }
+.type-げんそう { background-color: #9099a1; }
+.type-ひそう { background-color: #f2a828; }
+.type-unknown { background-color: #b7b7b7; }
+
+/* リザルト用ネームバッジ */
+.chara-name-tag {
+    width: 100%;
+    background-color: #34495e;
+    color: white;
+    padding: 8px 0;
+    font-size: 14px;
+    font-weight: bold;
+    border-radius: 6px;
+    margin-bottom: 10px;
+    text-align: center;
+}
+
+/* 別サイトへのリンク */
+.chara-link {
+    font-size: 14px;
+    color: #7f8c8d;
+    text-decoration: none;
+    border-bottom: 1px dashed #b2bec3;
+    transition: color 0.2s;
+}
+.chara-link:hover {
+    color: #e67e22;
+}
+
+/* 選択済みリスト */
+#selectedList {
+    margin: 20px auto;
+    padding: 20px;
+    background: #eef2f7;
+    border: 2px dashed #cbd5e1;
+    border-radius: 10px;
+    max-width: 400px;
+    min-height: 80px;
+    text-align: left;
+    display: none;
+}
+
+#seed {
+    font-weight: bold;
+    color: #7f8c8d;
+}
+
+#description {
+    margin-top: 5px;
+    border-top: 2px solid #dee2e6;
+    border-bottom: 2px solid #dee2e6;
+    text-align: left;
+}
+
+#filterGuide {
+    text-align: left;
+    max-width: 900px;
+    margin: 15px auto;
+    font-size: 16px;
+    background: #f9f9f9;
+    padding: 12px;
+    border-radius: 6px;
+    border: 1px solid #e1e8ed;
+    transition: background-color 0.2s;
+}
+
+#filterGuide:hover {
+    background: #f0f4f8;
+}
+
+#filterGuide summary {
+    font-size: 18px;
+    font-weight: bold;
+    color: #2c3e50;
+    outline: none;
+    user-select: none;
+    cursor: pointer;
+}
+
+#filterGuide .guide-content {
+    margin-top: 10px;
+    line-height: 1.6;
+    cursor: default;
+}
+
+/* 特殊ラウンドのアナウンス */
+#boostNotice {
+    color: #e67e22;
+    font-weight: bold;
+    font-size: 16px;
+    margin: 10px 0;
+    min-height: 54px;
+    line-height: 1.5;
+    display: none;
+    visibility: hidden;
+}
+</style>
+</head>
+<body>
+
+<h1>人形劇スカウト ver0.1</h1>
+
+<div id="startArea">
+    <input type="text" id="username" placeholder="名前を入力">
+    <button id="startButton">はじめる</button>
+</div>
+
+<div id="patchArea">
+    <h3>作品選択</h3>
+    <div class="patch-group">
+        <label class="patch-label"><input type="radio" name="patchFilter" value="風分離" checked>風分離</label>
+    </div>
+</div>
+
+<div id="filterArea">
+    <h3>出現フィルター</h3>
+    <div class="filter-group">
+        <label class="filter-label"><input type="checkbox" name="allowedFilter" value="一般" checked>一般</label>
+        <label class="filter-label"><input type="checkbox" name="allowedFilter" value="Tier1">Tier1</label>
+        <label class="filter-label"><input type="checkbox" name="allowedFilter" value="封殺">封殺</label>
+        <label class="filter-label"><input type="checkbox" name="allowedFilter" value="除外">除外</label>
+        <div class="break"></div>
+        <button type="button" id="selectAllFilters" style="padding: 4px 10px; font-size: 12px; font-weight: bold; background-color: #34495e; color: white; border: none; border-radius: 4px; cursor: pointer;">全てチェック</button>
+        <button type="button" id="cancelAllFilters" style="padding: 4px 10px; font-size: 12px; font-weight: bold; background-color: #34495e; color: white; border: none; border-radius: 4px; cursor: pointer;">全て外す</button>
+    </div>
+</div>
+
+<div id="generationArea">
+    <h3>世代</h3>
+    <div class="generation-group">
+        <label class="generation-label"><input type="checkbox" name="allowedGeneration" value="紅魔郷" checked>紅魔郷</label>
+        <label class="generation-label"><input type="checkbox" name="allowedGeneration" value="妖々夢" checked>妖々夢</label>
+        <label class="generation-label"><input type="checkbox" name="allowedGeneration" value="永夜抄" checked>永夜抄</label>
+        <label class="generation-label"><input type="checkbox" name="allowedGeneration" value="花映塚" checked>花映塚</label>
+        <label class="generation-label"><input type="checkbox" name="allowedGeneration" value="風神録" checked>風神録</label>
+        <label class="generation-label"><input type="checkbox" name="allowedGeneration" value="地霊殿" checked>地霊殿</label>
+        <label class="generation-label"><input type="checkbox" name="allowedGeneration" value="星蓮船" checked>星蓮船</label>
+        <label class="generation-label"><input type="checkbox" name="allowedGeneration" value="神霊廟" checked>神霊廟</label>
+        <label class="generation-label"><input type="checkbox" name="allowedGeneration" value="輝針城" checked>輝針城</label>
+        <label class="generation-label"><input type="checkbox" name="allowedGeneration" value="紺珠伝" checked>紺珠伝</label>
+        <div class="break"></div>
+        <label class="generation-label"><input type="checkbox" name="allowedGeneration" value="靈異伝" checked>靈異伝</label>
+        <label class="generation-label"><input type="checkbox" name="allowedGeneration" value="封魔録" checked>封魔録</label>
+        <label class="generation-label"><input type="checkbox" name="allowedGeneration" value="夢時空" checked>夢時空</label>
+        <label class="generation-label"><input type="checkbox" name="allowedGeneration" value="幻想郷" checked>幻想郷</label>
+        <label class="generation-label"><input type="checkbox" name="allowedGeneration" value="怪綺談" checked>怪綺談</label>
+        <div class="break"></div>
+        <label class="generation-label"><input type="checkbox" name="allowedGeneration" value="格闘ゲーム" checked>格闘ゲーム</label>
+        <label class="generation-label"><input type="checkbox" name="allowedGeneration" value="書籍" checked>書籍</label>
+        <label class="generation-label"><input type="checkbox" name="allowedGeneration" value="その他" checked>その他</label>
+
+        <button type="button" id="selectAllGeneration" style="padding: 4px 10px; font-size: 12px; font-weight: bold; background-color: #34495e; color: white; border: none; border-radius: 4px; cursor: pointer;">全てチェック</button>
+        <button type="button" id="cancelAllGeneration" style="padding: 4px 10px; font-size: 12px; font-weight: bold; background-color: #34495e; color: white; border: none; border-radius: 4px; cursor: pointer;">全て外す</button>
+    </div>
+</div>
+
+<div id="optionArea">
+    <h3>特殊ルール</h3>
+    <div class="option-group">
+        <label class="option-label"><input type="checkbox" name="specialRules" value="typeUnique">タイプ重複禁止</label>
+        <label class="option-label"><input type="checkbox" name="specialRules" value="levelVariance">レベル混沌モード</label>
+    </div>
+</div>
+
+<div id="scoutOptionArea">
+    <label>一度に提示する候補数：</label>
+    <select id="candidateCount">
+        <option value="3">3種類</option>
+        <option value="4">4種類</option>
+        <option value="5" selected>5種類</option>
+        <option value="6">6種類</option>
+        <option value="7">7種類</option>
+        <option value="8">8種類</option>
+        <option value="9">9種類</option>
+        <option value="10">10種類</option>
+    </select>
+    <div class="break"></div>
+    <label>スカウト回数：</label>
+    <select id="scoutCount">
+        <option value="3">3回</option>
+        <option value="4">4回</option>
+        <option value="5">5回</option>
+        <option value="6" selected>6回</option>
+        <option value="7">7回</option>
+        <option value="8">8回</option>
+        <option value="9">9回</option>
+        <option value="10">10回</option>
+        <option value="11">11回</option>
+        <option value="12">12回</option>
+    </select>
+</div>
+
+<p id="seed"></p>
+<p id="round"></p>
+
+<div id="choices"></div>
+<p id="boostNotice"></p>
+
+<div id="resultDisplay"></div>
+<div id="result"></div>
+<div id="selectedList"></div>
+
+<div id="description">
+    <h2>説明</h2>
+    <p>ランダムなキャラクターをスカウトしてチームを編成しましょう。</p>
+    <p>名前と日付、各種設定によって抽選内容が固定されます。</p>
+</div>
+
+<details id="filterGuide">
+    <summary><strong>フィルター詳細（風分離）</strong></summary>
+    <div class="guideContent">
+    <p>◆Tier1</p>
+    <p>未定</p>
+    
+    <p>◆封殺</p>
+    <p>未定</p>
+
+    <p>◆除外</p>
+    <p>けだま/あきゅう/げんじぃ/とり/こすず/ゾンビF/フェアリー/テンソク/りんのすけ</p>
+
+    <br>
+    <p>・はたては風神録としています。</p>
+    </div>
+</details>
+
+<details id="filterGuide">
+    <summary><strong>レベル混沌モードについて</strong></summary>
+    <div class="guideContent">
+    <p>全てのキャラクターがランダムなレベルで提示されます。</p>
+    <p>どのようなゲームバランスになるかは誰にも予想できません。</p>
+</div>
+</details>
+
+<script>
+let characterTable = [];
+let remainingCharacters = [];
+let selectedCharacters = [];
+let round = 1;
+let candidateCount = 5;
+let scoutCount = 6;
+let activeRules = [];
+let allowedfilterGlobal = [];
+let allowedGenerationGlobal = [];
+let selectedPatchGlobal = "本家";
+let currentSeed = 0;
+
+function loadScript(src) {
+    return new Promise((resolve, reject) => {
+        // すでに同じスクリプトが読み込まれていれば古いものは削除する（重複防止）
+        const oldScript = document.querySelector(`script[src="${src}"]`);
+        if (oldScript) oldScript.remove();
+
+        const script = document.createElement('script');
+        script.src = src;
+        script.onload = () => resolve();
+        script.onerror = () => reject(new Error(`ファイルの読み込みに失敗しました: ${src}`));
+        document.head.appendChild(script);
+    });
+}
+
+async function startGame(){
+    // 各種設定値の取得
+    const checkboxesRules = document.querySelectorAll('input[name="specialRules"]:checked');
+    activeRules = Array.from(checkboxesRules).map(cb => cb.value);
+
+    const checkboxesFilters = document.querySelectorAll('input[name="allowedFilter"]:checked');
+    allowedfilterGlobal = Array.from(checkboxesFilters).map(cb => cb.value);
+
+    const checkboxesGeneration = document.querySelectorAll('input[name="allowedGeneration"]:checked');
+    allowedGenerationGlobal = Array.from(checkboxesGeneration).map(cb => cb.value);
+
+    const radioPatch = document.querySelector('input[name="patchFilter"]:checked');
+    selectedPatchGlobal = radioPatch ? radioPatch.value : "本家";
+    
+    let targetScript = "charaDB/本家.js";
+    if (selectedPatchGlobal !== "本家") {
+        targetScript = `charaDB/${selectedPatchGlobal}.js`;
+    }
+
+    try {
+        await loadScript(targetScript);
+
+        if (window.customCsvData) {
+            characterTable = parseCSV(window.customCsvData);
+        } else {
+            alert("データが見つかりませんでした。");
+            return;
+        }
+
+    } catch (error) {
+        alert("エラーが発生しました: " + error.message);
+        return; // エラー時はここで処理をストップ
+    }
+
+    remainingCharacters = [...characterTable];
+    selectedCharacters = [];
+    round = 1;
+    candidateCount = Number(document.getElementById("candidateCount").value);
+    scoutCount = Number(document.getElementById("scoutCount").value);
+
+    let name = document.getElementById("username").value;
+    if(name === ""){ name = "名前未入力"; }
+    const today = new Intl.DateTimeFormat("sv-SE", { timeZone: "Asia/Tokyo" }).format(new Date());
+    
+    currentSeed = stringToSeed(name + today + candidateCount + scoutCount + selectedPatchGlobal + allowedfilterGlobal.join(",") + allowedGenerationGlobal.join(",") + activeRules.join(","));
+
+    // 画面エリアの切り替え
+    document.getElementById("startArea").style.display = "none";
+    document.getElementById("scoutOptionArea").style.display = "none";
+    document.getElementById("patchArea").style.display = "none";
+    document.getElementById("filterArea").style.display = "none";
+    document.getElementById("generationArea").style.display = "none";
+    document.getElementById("optionArea").style.display = "none";
+    document.getElementById("selectedList").style.display = "block";
+    document.getElementById("boostNotice").style.display = "block";
+    
+    // リザルト表示をリセットしておく
+    document.getElementById("resultDisplay").style.display = "none";
+    document.getElementById("resultDisplay").innerHTML = "";
+    document.getElementById("result").innerHTML = "";
+
+    updateSelectedList();
+    showChoices();
+}
+
+function parseCSV(csv) {
+    const lines = csv.trim().split("\n");
+    const headers = lines[0].split(",");
+    
+    return lines.slice(1).map(line => {
+        const values = line.split(",");
+        const obj = {};
+        headers.forEach((header, index) => {
+            obj[header.trim()] = values[index] ? values[index].trim() : "";
+        });
+        return obj;
+    });
+}
+
+function showChoices(){
+    let name = document.getElementById("username").value || "名前未入力";
+    const today = new Intl.DateTimeFormat("sv-SE", { timeZone: "Asia/Tokyo" }).format(new Date());
+
+    if (selectedCharacters.length > 0) {
+        // 直前に選んだキャラクターの名前
+        const lastChosenName = selectedCharacters[selectedCharacters.length - 1].name;
+        // 現在のシード値に、文字列とラウンド数の要素を掛け合わせてブレンドする
+        currentSeed = (currentSeed + stringToSeed(lastChosenName + round)) >>> 0;
+    }
+
+    const boostNotice = document.getElementById("boostNotice");
+    boostNotice.style.visibility = "hidden";
+
+    let currentPool = remainingCharacters;
+    let noticeTexts = [];
+
+    // --- 【追加】特殊ルール：「しんかのきせき追加」が無効なときは輝石キャラをあらかじめ除外 ---
+    if (!activeRules.includes("Eviolite")) {
+        currentPool = currentPool.filter(c => {
+            return !(c.styleForm && c.styleForm.trim() === "輝石");
+        });
+    }
+
+    // --- 【2. 特殊ルール：タイプ重複禁止 (typeUnique) 】 ---
+    if (activeRules.includes("typeUnique")) {
+        const selectedTypes = new Set();
+        selectedCharacters.forEach(c => {
+            if (c.type1 && c.type1.trim() !== "") selectedTypes.add(c.type1.trim());
+            if (c.type2 && c.type2.trim() !== "") selectedTypes.add(c.type2.trim());
+        });
+        
+        // 獲得済みキャラクターのタイプを1つでも持っていたらプールから除外
+        if (selectedTypes.size > 0) {
+            currentPool = currentPool.filter(c => {
+                const hasType1 = c.type1 && selectedTypes.has(c.type1.trim());
+                const hasType2 = c.type2 && selectedTypes.has(c.type2.trim());
+                return !hasType1 && !hasType2;
+            });
+        }
+    }
+
+    //世代による選別
+    currentPool = currentPool.filter(c => {
+        const charGenerations = c.generation ? c.generation.split('/') : ["一般"];
+        return charGenerations.some(f => allowedGenerationGlobal.includes(f));
+    });
+
+    //特殊ルール選別
+    if (activeRules.includes("legend6th")) {
+        if (round < scoutCount) {
+            currentPool = currentPool.filter(c => {
+                const charFilters = c.filters ? c.filters.split('/').map(f => f.trim()) : ["一般"];
+                
+                // キャラクターの持つフィルターがすべて、選択されたフィルターに含まれている
+                const isWithinSelection = charFilters.every(f => allowedfilterGlobal.includes(f));
+                
+                const isNotLegendaryOr600 = !charFilters.includes("準伝説") && !charFilters.includes("禁止級") && !charFilters.includes("幻") && !charFilters.includes("600族");
+                return isWithinSelection && isNotLegendaryOr600;
+            });
+            noticeTexts.push("<span style='color: #333;'>🐇 伝説・600族 出現なし</span>");
+        } else if (round === scoutCount) {
+            currentPool = currentPool.filter(c => {
+                const charFilters = c.filters ? c.filters.split('/').map(f => f.trim()) : ["一般"];
+                
+                // キャラクターの持つフィルターがすべて、選択されたフィルターに含まれている
+                const isWithinSelection = charFilters.every(f => allowedfilterGlobal.includes(f));
+                
+                const isLegendaryOr600 = charFilters.includes("準伝説") || charFilters.includes("禁止級") || charFilters.includes("幻") || charFilters.includes("600族");
+                return isWithinSelection && isLegendaryOr600;
+            });
+            noticeTexts.push("👑 最終回：伝説・600族 確定出現！");
+        }
+    } else {
+        //フィルター条件を満たすキャラクターをプールに残す
+        currentPool = currentPool.filter(c => {
+            const charFilters = c.filters ? c.filters.split('/').map(f => f.trim()) : ["一般"];
+            
+            // キャラクターの持つフィルターがすべて、選択されたフィルターに含まれている場合のみ残す (未選択のフィルターを1つでも持っていれば除外)
+            return charFilters.every(f => allowedfilterGlobal.includes(f));
+        });
+    }
+
+    if (activeRules.includes("starter30x") && round === 1) {
+        noticeTexts.push("🏫 1体目：御三家ピカブイの出現率30倍！");
+    }
+
+    if (noticeTexts.length > 0) {
+        boostNotice.innerHTML = noticeTexts.join("<br>");
+        boostNotice.style.visibility = "visible";
+    } else {
+        boostNotice.innerHTML = "&nbsp;";
+    }
+
+    if (currentPool.length === 0) {
+        if (round === 1) {
+            alert("出現条件に合うキャラクターがプールに存在しません。");
+            resetToStart();
+            return;
+        }else{
+            alert("出現条件に合うキャラクターがプールに存在しないため、ここでスカウトを終了します。");
+            showResult();
+            return;
+        }
+    }
+
+    // 重み付けオブジェクトの作成
+    let pool = currentPool.map(c => {
+        let weight = 1;
+        const charFilters = c.characterRace ? c.characterRace.split('/') : [""];
+        if (activeRules.includes("starter30x") && round === 1 && charFilters.includes("御三家")) {
+            weight = 30;
+        }
+        return { data: c, weight: weight };
+    });
+
+    let chosenCandidates = [];
+    const currentCandidateCount = Math.min(candidateCount, pool.length);
+
+    for(let c = 0; c < currentCandidateCount; c++) {
+        let totalWeight = pool.reduce((sum, item) => sum + item.weight, 0);
+        if(totalWeight <= 0) break;
+
+        const rand = seededRandom(currentSeed);
+        currentSeed = rand.seed;
+        
+        let target = rand.value * totalWeight;
+        let currentSum = 0;
+        let selectedIndex = 0;
+
+        for(let i = 0; i < pool.length; i++) {
+            currentSum += pool[i].weight;
+            if(target <= currentSum) {
+                selectedIndex = i;
+                break;
+            }
+        }
+
+        // オブジェクトのコピーを作成し、レベル変動を計算して付与する
+        let charDataCopy = Object.assign({}, pool[selectedIndex].data);
+        if (activeRules.includes("levelVariance") && charDataCopy.MinLevel && charDataCopy.MaxLevel) {
+            const min = Number(charDataCopy.MinLevel);
+            const max = Number(charDataCopy.MaxLevel);
+            if (!isNaN(min) && !isNaN(max) && max >= min) {
+                // シード値から再度乱数を得て、そのキャラ用のレベルを決定する（固定化のため）
+                const lvlRand = seededRandom(currentSeed);
+                currentSeed = lvlRand.seed;
+                charDataCopy.chosenLevel = Math.floor(lvlRand.value * (max - min + 1)) + min;
+            }
+        }
+
+        chosenCandidates.push(charDataCopy);
+        pool.splice(selectedIndex, 1);
+    }
+
+    let ruleNames = [];
+    if (activeRules.includes("starter30x")) ruleNames.push("御三家30倍");
+    if (activeRules.includes("legend6th")) ruleNames.push("伝説最後確定");
+    if (activeRules.includes("typeUnique")) ruleNames.push("タイプ重複禁止");
+    if (activeRules.includes("Eviolite")) ruleNames.push("輝石");
+    if (activeRules.includes("levelVariance")) ruleNames.push("レベル混沌");
+    let ruleText = ruleNames.length > 0 ? ruleNames.join("＋") : "なし";
+    let filterText = allowedfilterGlobal.length > 0 ? allowedfilterGlobal.join("、") : "なし";
+    let generationText = allowedGenerationGlobal.length > 0 ? allowedGenerationGlobal.join("、") : "なし";
+
+    document.getElementById("seed").innerHTML = `
+        名前：${name}　日付：${today}　提示数：${candidateCount}種類<br>
+        作品：${selectedPatchGlobal}<br>
+        フィルター：${filterText}<br>
+        世代：${generationText}<br>
+        特殊ルール：${ruleText}
+    `;
+    
+    document.getElementById("round").style.display = "block";
+    document.getElementById("round").textContent = `${round} / ${scoutCount}回目`;
+
+    const choicesDiv = document.getElementById("choices");
+    choicesDiv.style.display = "flex";
+    choicesDiv.innerHTML = "";
+
+    chosenCandidates.forEach(charData => {
+        const card = document.createElement("div");
+        card.className = "chara-card";
+
+        // 画像とアイコンを内包するコンテナを生成
+        const imgContainer = document.createElement("div");
+        imgContainer.className = "img-container";
+
+        //キャラクター画像ファイル
+        const img = document.createElement("img");
+        img.className = "chara-img";
+        if (charData.imgFile && charData.imgFile.trim() !== "") {
+            img.src = `images/character/${charData.imgFile}.png`;
+        } else {
+            img.src = `images/character/${charData.name}.png`;
+        }
+        img.alt = charData.name;
+        img.onerror = function() {
+            img.src = "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7";
+        };
+        imgContainer.appendChild(img);
+        
+        if (charData.styleForm) {
+            const icon = document.createElement("img");
+            icon.className = "style-icon";
+            icon.src = `images/icon/${charData.styleForm}.png`;
+            icon.alt = charData.styleForm;
+            icon.onerror = function() {
+                icon.src = "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7";
+            }
+            imgContainer.appendChild(icon);
+        }
+
+        card.appendChild(imgContainer);
+
+        const typeContainer = document.createElement("div");
+        typeContainer.className = "type-container";
+        [charData.type1, charData.type2].forEach(type => {
+            if (type && type.trim() !== "") {
+                const badge = document.createElement("span");
+                badge.className = `type-badge type-${type}`;
+                badge.textContent = type;
+                typeContainer.appendChild(badge);
+            }
+        });
+        card.appendChild(typeContainer);
+
+        const button = document.createElement("button");
+        // レベルが決定していればボタンのテキストに反映
+        const levelText = charData.chosenLevel ? `<br>Lv.${charData.chosenLevel}` : "";
+        button.innerHTML = charData.name + levelText;
+        button.onclick = () => selectCharacter(charData);
+        card.appendChild(button);
+
+        if (charData.link !== ""){
+            const link = document.createElement("a");
+            link.className = "chara-link";
+            if (charData.link) link.href = charData.link;
+            link.target = "_blank";
+            link.rel = "noopener noreferrer";
+            link.textContent = "wiki ↗";
+            card.appendChild(link);
+        }
+        
+        choicesDiv.appendChild(card);
+    });
+}
+
+function selectCharacter(characterObj){
+    selectedCharacters.push(characterObj);
+    
+    // 選択されたキャラをプールから除外
+    remainingCharacters = remainingCharacters.filter(c => c.name !== characterObj.name);
+
+    // --- 【追加】選んだキャラが輝石キャラだった場合、以降は輝石キャラをプールから全て取り除く ---
+    if (characterObj.styleForm && characterObj.styleForm.trim() === "輝石") {
+        remainingCharacters = remainingCharacters.filter(c => {
+            return !(c.styleForm && c.styleForm.trim() === "輝石");
+        });
+    }
+
+    updateSelectedList();
+
+    if(round >= scoutCount){
+        showResult();
+        return;
+    }
+
+    round++;
+    showChoices();
+}
+
+function showResult(){
+    document.getElementById("choices").innerHTML = "";
+    document.getElementById("choices").style.display = "none";
+    document.getElementById("selectedList").style.display = "none";
+    document.getElementById("boostNotice").style.display = "none";
+    document.getElementById("boostNotice").style.margin = "0";
+    
+    document.getElementById("round").style.display = "none";
+
+    document.getElementById("resultDisplay").style.display = "grid";
+    const resultDisplay = document.getElementById("resultDisplay");
+    resultDisplay.innerHTML = "";
+
+    selectedCharacters.forEach(charData => {
+        const card = document.createElement("div");
+        card.className = "chara-card";
+
+        const imgContainer = document.createElement("div");
+        imgContainer.className = "img-container";
+
+        //キャラクター画像ファイル
+        const img = document.createElement("img");
+        img.className = "chara-img";
+        if (charData.imgFile && charData.imgFile.trim() !== "") {
+            img.src = `images/character/${charData.imgFile}.png`;
+        } else {
+            img.src = `images/character/${charData.name}.png`;
+        }
+        img.alt = charData.name;
+        img.onerror = function() {
+            img.src = "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7";
+        };
+        imgContainer.appendChild(img);
+        
+        if (charData.styleForm) {
+            const icon = document.createElement("img");
+            icon.className = "style-icon";
+            icon.src = `images/icon/${charData.styleForm}.png`;
+            icon.alt = charData.styleForm;
+            icon.onerror = function() {
+                icon.src = "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7";
+            };
+            imgContainer.appendChild(icon);
+        }
+
+        card.appendChild(imgContainer);
+
+        const typeContainer = document.createElement("div");
+        typeContainer.className = "type-container";
+        [charData.type1, charData.type2].forEach(type => {
+            if (type && type.trim() !== "") {
+                const badge = document.createElement("span");
+                badge.className = `type-badge type-${type}`;
+                badge.textContent = type;
+                typeContainer.appendChild(badge);
+            }
+        });
+        card.appendChild(typeContainer);
+
+        const nameTag = document.createElement("div");
+        nameTag.className = "chara-name-tag";
+        const levelText = charData.chosenLevel ? `<br>Lv.${charData.chosenLevel}` : "";
+        nameTag.innerHTML = charData.name + levelText;
+        card.appendChild(nameTag);
+
+        if (charData.link !== ""){
+            const link = document.createElement("a");
+            link.className = "chara-link";
+            if (charData.link) link.href = charData.link;
+            link.target = "_blank";
+            link.rel = "noopener noreferrer";
+            link.textContent = "wiki ↗";
+            card.appendChild(link);
+        }
+
+        resultDisplay.appendChild(card);
+    });
+
+    // 【修正点】コピーした際のテキスト一覧（selectedListと同等の内容）を生成
+    const listHtml = selectedCharacters.map((char, index) => {
+        const formSuffix = char.styleForm ? `（${char.styleForm}）` : "";
+        const levelSuffix = char.chosenLevel ? ` Lv.${char.chosenLevel}` : "";
+        return `<div class="selected-item" style="margin: 4px 0;">${index + 1}. ${char.name}${formSuffix}${levelSuffix}</div>`;
+    }).join("");
+
+    // 【修正点】コピーボタンとやりなおすボタンの間に、作成したリストを挟み込む
+    // 見栄えを整えるため、挟み込むリストに簡易的なスタイル（枠線や背景）を当てています
+    document.getElementById("result").innerHTML = `
+        <button id="copyButton">結果をコピー</button>
+        <div id="resultSelectedList" style="margin: 20px auto; padding: 20px; background: #eef2f7; border: 2px dashed #cbd5e1; border-radius: 10px; max-width: 400px; text-align: left;">
+            ${listHtml}
+        </div>
+        <button id="retryButton">同じ設定でもう一度やりなおす</button>
+    `;
+    
+    document.getElementById("copyButton").onclick = copyResult;
+    document.getElementById("retryButton").onclick = resetToStart;
+}
+
+function copyResult(){
+    // 各キャラクターのnameの後ろに、styleFormがあればカッコ付きで追加する
+    const text = selectedCharacters.map((char, index) => {
+        // styleFormが存在し、かつ空文字でなければ「（形式）」を後ろに付ける
+        const formSuffix = char.styleForm ? `（${char.styleForm}）` : "";
+        const levelSuffix = char.chosenLevel ? ` Lv.${char.chosenLevel}` : "";
+        return `${index + 1}. ${char.name}${formSuffix}${levelSuffix}`;
+    }).join("\n");
+
+    if (navigator.clipboard) {
+        navigator.clipboard.writeText(text).then(() => {
+            alert("結果をクリップボードにコピーしました！");
+        }).catch(err => {
+            alert("コピーに失敗しました: " + err);
+        });
+    } else {
+        const textarea = document.createElement("textarea");
+        textarea.value = text;
+        document.body.appendChild(textarea);
+        textarea.select();
+        try {
+            document.execCommand("copy");
+            alert("結果をクリップボードにコピーしました！");
+        } catch (err) {
+            alert("コピーに失敗しました");
+        }
+        document.body.removeChild(textarea);
+    }
+}
+
+//入力を保持したまま最初の状態に戻す関数
+function resetToStart(){
+
+    // 非表示になっていた設定エリアや開始エリアを元に戻す
+    document.getElementById("startArea").style.display = "block";
+    document.getElementById("scoutOptionArea").style.display = "block";
+    document.getElementById("patchArea").style.display = "block";
+    document.getElementById("filterArea").style.display = "block";
+    document.getElementById("generationArea").style.display = "block";
+    document.getElementById("optionArea").style.display = "block";
+
+    // ドラフト中・結果画面の表示を非表示にする
+    document.getElementById("selectedList").style.display = "none";
+    document.getElementById("resultDisplay").style.display = "none";
+    document.getElementById("boostNotice").style.display = "none";
+    document.getElementById("result").innerHTML = "";
+    document.getElementById("seed").innerHTML = "";
+    document.getElementById("round").innerHTML = "";
+
+    window.scrollTo({
+        top: 0,
+        behavior: "auto"
+    });
+}
+
+function updateSelectedList(){
+    const listDiv = document.getElementById("selectedList");
+    // styleFormがあれば名前の後ろにカッコ付きで追加する
+    listDiv.innerHTML = selectedCharacters.map((char, index) => {
+        const formSuffix = char.styleForm ? `（${char.styleForm}）` : "";
+        const levelSuffix = char.chosenLevel ? ` Lv.${char.chosenLevel}` : "";
+        return `<div class="selected-item">${index + 1}. ${char.name}${formSuffix}${levelSuffix}</div>`;
+    }).join("");
+}
+
+function stringToSeed(str) {
+    let seed = 0;
+    for(let i = 0; i < str.length; i++) {
+        seed = (seed * 31 + str.charCodeAt(i)) >>> 0;
+    }
+    return seed;
+}
+
+function seededRandom(seed) {
+    seed = (seed * 1664525 + 1013904223) % 4294967296;
+    return { value: seed / 4294967296, seed: seed };
+}
+
+document.getElementById("startButton").addEventListener("click", startGame);
+
+// 「全てチェック」ボタンを押したときの処理
+document.getElementById("selectAllFilters").addEventListener("click", () => {
+    const checkboxes = document.querySelectorAll('input[name="allowedFilter"]');
+    checkboxes.forEach(cb => {
+        cb.checked = true;
+    });
+});
+document.getElementById("cancelAllFilters").addEventListener("click", () => {
+    const checkboxes = document.querySelectorAll('input[name="allowedFilter"]');
+    checkboxes.forEach(cb => {
+        cb.checked = false;
+    });
+});
+
+// 「全てチェック」ボタンを押したときの処理
+document.getElementById("selectAllGeneration").addEventListener("click", () => {
+    const checkboxes = document.querySelectorAll('input[name="allowedGeneration"]');
+    checkboxes.forEach(cb => {
+        cb.checked = true;
+    });
+});
+document.getElementById("cancelAllGeneration").addEventListener("click", () => {
+    const checkboxes = document.querySelectorAll('input[name="allowedGeneration"]');
+    checkboxes.forEach(cb => {
+        cb.checked = false;
+    });
+});
+
+</script>
+
+</body>
+</html>
