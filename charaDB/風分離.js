@@ -184,7 +184,7 @@ Dすわこ,しんとう,みず,50,53,風神録,一般,,,,https://seesaawiki.jp/k
 Sヤマメ,しょうき,だいち,50,53,地霊殿,一般,,,,https://seesaawiki.jp/kazebunri/d/S%A5%E4%A5%DE%A5%E1
 Tヤマメ,あんこく,だいち,50,53,地霊殿,一般,,,,https://seesaawiki.jp/kazebunri/d/T%A5%E4%A5%DE%A5%E1
 Tさとり,こころ,あんこく,50,53,地霊殿,一般,,,,https://seesaawiki.jp/kazebunri/d/T%A4%B5%A4%C8%A4%EA
-Dさとり,こころ,,50,53,地霊殿,一般,,,,https://seesaawiki.jp/kazebunri/d/D%A4%B5%A4%C8%A4%EA
+Dさとり,こころ,,50,53,地霊殿,除外,,,,https://seesaawiki.jp/kazebunri/d/D%A4%B5%A4%C8%A4%EA
 Sこがさ,おばけ,かぜ,50,53,星蓮船,一般,,,,https://seesaawiki.jp/kazebunri/d/S%A4%B3%A4%AC%A4%B5
 Tこがさ,みず,ひこう,50,53,星蓮船,一般,,,,https://seesaawiki.jp/kazebunri/d/T%A4%B3%A4%AC%A4%B5
 Aしょう,しんとう,だいち,50,53,星蓮船,一般,,,,https://seesaawiki.jp/kazebunri/d/A%A4%B7%A4%E7%A4%A6
