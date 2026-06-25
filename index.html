@@ -170,6 +170,7 @@ select {
 
 /* 進行状況テキスト */
 #round {
+    font-size: 20px;
     font-weight: bold;
     margin-bottom: 10px;
     display: flex;
@@ -236,7 +237,6 @@ select {
     position: relative;
     width: 110px;
     height: 110px;
-    margin-bottom: 8px;
 }
 
 .chara-img {
@@ -264,7 +264,7 @@ select {
 .type-container {
     display: flex;
     gap: 4px;
-    margin-bottom: 12px;
+    margin-bottom: 8px;
     justify-content: center;
     width: 100%;
 }
@@ -340,6 +340,13 @@ select {
     height: 20px;
     object-fit: contain;
     flex-shrink: 0;
+}
+
+#roundInfo {
+    display: none;
+    height: 40px;
+    justify-content:space-between; 
+    align-items: flex-end;
 }
 
 /* タイプカラー定義 */
@@ -434,13 +441,10 @@ select {
 /* 特殊ラウンドのアナウンス */
 #boostNotice {
     color: #e67e22;
+    text-align: left;
     font-weight: bold;
     font-size: 14px;
-    margin: 10px 0;
-    min-height: 30px;
-    line-height: 1.5;
     display: none;
-    visibility: hidden;
 }
 
 table {
@@ -536,7 +540,7 @@ table td:nth-child(3) {
 </head>
 <body>
 
-<h1>人形劇スカウト ver0.4</h1>
+<h1>人形劇スカウト ver0.5</h1>
 
 <div id="startArea">
     <input type="text" id="username" placeholder="名前を入力">
@@ -632,14 +636,13 @@ table td:nth-child(3) {
 
 <p id="seed"></p>
 
-<div style="display: flex; justify-content: space-between; ">
-  <div style="flex: 1;"></div>
+<div id="roundInfo">
+  <div id="boostNotice"style="flex: 1;"></div>
   <div id="round" style="flex: 1;"></div>
   <div id="poolCount" style="flex: 1; text-align: right; color: #8c8c8c;"></div>
 </div>
 
 <div id="choices"></div>
-<p id="boostNotice"></p>
 
 <div id="resultDisplay"></div>
 <div id="result"></div>
@@ -711,7 +714,8 @@ table td:nth-child(3) {
     <p>特性/アイテム/技構成が決まった状態で提示されます。</p>
     <p>性格と努力値は指定されていません。</p>
     <p>同じ持ち物のキャラクターは提示されなくなります。</p>
-    <p>対応作品：風分離</p>
+    <p>対応作品：<br>風分離_2.48</p>
+    <p>未対応：<br>1.8+輝針城</p>
 </div>
 </details>
 
@@ -786,29 +790,58 @@ async function startGame(){
         }
 
     } catch (error) {
-        alert("エラーが発生しました: " + error.message);
+        if (activeRules.includes("factoryMode")) {
+            alert("エラー: " + `「${selectedPatchGlobal}」はファクトリーに対応していません。`);
+        }else{
+            alert("エラー: " + error.message);
+        }
+        
         return; // エラー時はここで処理をストップ
     }
     
     if (activeRules.includes("factoryMode")){
-        targetScript = `charaDB/${selectedPatchGlobal}技DB.js`;
+        targetScript = `charaDB/ファクトリー技DB.js`;
         try {
             await loadScript(targetScript);
 
             if (window.customCsvData) {
                 skillTable = parseCSV(window.customCsvData);
             } else {
-                //alert("データが見つかりませんでした。");
+                alert("データが見つかりませんでした。");
+                return;
             }
 
         } catch (error) {
-            targetScript = `charaDB/本家技DB.js`;
-            await loadScript(targetScript);
-            skillTable = parseCSV(window.customCsvData);
+            alert("エラー: " + error.message);
+            return;
         }
     }
-	
 
+    // --- skillTableの調整 ---
+    if (activeRules.includes("factoryMode")) {
+        const skillMap = new Map();
+
+        for (const c of skillTable) {
+            const patch = c.patch.trim();
+            
+            if (patch !== "本家" && patch !== selectedPatchGlobal) {
+                continue;
+            }
+
+            // すでに同じ名前のスキルがMapにあるか確認
+            const existing = skillMap.get(c.name);
+
+            // まだ登録されていない、または既存のものが「本家」で今回のが「選択作品」なら上書き
+            if (!existing || (existing.patch.trim() === "本家" && patch === selectedPatchGlobal)) {
+                skillMap.set(c.name, c);
+            }
+        }
+        // Mapの値を配列に戻す
+        skillTable = Array.from(skillMap.values());
+    }
+	
+	
+	// --- selectedPatchGlobal に応じたタイプ相性表の動的変更 ---
     if (selectedPatchGlobal === "風分離"){
         typesList = ["ゆめ", "おばけ", "ひこう", "けもの", "しょうき", "はがね", "あんこく", "だいち", "ほのお", "みず", "でんき", "かぜ", "しぜん", "こおり", "しんとう", "ことわり", "こころ", "げんそう", "空白"];
         
@@ -881,6 +914,7 @@ async function startGame(){
     document.getElementById("filterArea").style.display = "none";
     document.getElementById("generationArea").style.display = "none";
     document.getElementById("optionArea").style.display = "none";
+    document.getElementById("roundInfo").style.display = "flex";
     document.getElementById("boostNotice").style.display = "block";
     
     // リザルト表示をリセット
@@ -931,6 +965,13 @@ function showChoices(){
 
     let currentPool = remainingCharacters;
     let noticeTexts = [];
+    
+    // --- ファクトリーモードでアイテムが「停止」のキャラを除外 ---
+    if (activeRules.includes("factoryMode")) {
+        currentPool = currentPool.filter(c => {
+            return !(c.item && c.item.trim() === "停止");
+        });
+    }
 
     // --- 【追加】特殊ルール：「しんかのきせき追加」が無効なときは輝石キャラをあらかじめ除外 ---
     if (!activeRules.includes("Eviolite")) {
@@ -985,7 +1026,7 @@ function showChoices(){
                 const isNotLegendaryOr600 = !charFilters.includes("準伝説") && !charFilters.includes("禁止級") && !charFilters.includes("幻") && !charFilters.includes("600族");
                 return isWithinSelection && isNotLegendaryOr600;
             });
-            noticeTexts.push("<span style='color: #333;'>🐇 伝説・600族 出現なし</span>");
+            noticeTexts.push("<span style='color: #333;'>🐇 伝説600族 出現なし</span>");
         } else if (round === scoutCount) {
             currentPool = currentPool.filter(c => {
                 const charFilters = c.filters ? c.filters.split('/').map(f => f.trim()) : ["一般"];
@@ -996,7 +1037,7 @@ function showChoices(){
                 const isLegendaryOr600 = charFilters.includes("準伝説") || charFilters.includes("禁止級") || charFilters.includes("幻") || charFilters.includes("600族");
                 return isWithinSelection && isLegendaryOr600;
             });
-            noticeTexts.push("👑 最終回：伝説・600族 確定出現！");
+            noticeTexts.push("👑 最終回：伝説600族 確定出現！");
         }
     } else {
         //フィルター条件を満たすキャラクターをプールに残す
@@ -1290,6 +1331,7 @@ function showResult(){
     document.getElementById("boostNotice").style.margin = "0";
     document.getElementById("round").style.display = "none";
     document.getElementById("poolCount").style.display = "none";
+    document.getElementById("roundInfo").style.display = "none";
 
     document.getElementById("scoutingResultDisplay").innerHTML = ""; 
     document.getElementById("resultDisplay").style.display = "grid";
@@ -1390,6 +1432,7 @@ function resetToStart(){
     // ドラフト中・結果画面の表示を非表示にする
     document.getElementById("resultDisplay").style.display = "none";
     document.getElementById("boostNotice").style.display = "none";
+    document.getElementById("roundInfo").style.display = "none";
     tableContainer.style.display = 'none';
     document.getElementById("result").innerHTML = "";
     document.getElementById("seed").innerHTML = "";
