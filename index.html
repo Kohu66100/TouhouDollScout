@@ -551,6 +551,7 @@ table td:nth-child(3) {
     <h3>作品選択</h3>
     <div class="patch-group">
         <label class="patch-label"><input type="radio" name="patchFilter" value="1.8+輝針城" checked>1.8+輝針城</label>
+        <label class="patch-label"><input type="radio" name="patchFilter" value="続・幻想卿シナリオ">続・幻想卿シナリオ</label>
         <label class="patch-label"><input type="radio" name="patchFilter" value="風分離">風分離</label>
     </div>
 </div>
@@ -714,8 +715,9 @@ table td:nth-child(3) {
     <p>特性/アイテム/技構成が決まった状態で提示されます。</p>
     <p>性格と努力値は指定されていません。</p>
     <p>同じ持ち物のキャラクターは提示されなくなります。</p>
+    <p>アイテムの名称は馴染みあるものに揃えています。</p>
     <p>対応作品：<br>風分離_2.48</p>
-    <p>未対応：<br>1.8+輝針城</p>
+    <p>未対応：<br>1.8+輝針城<br>続・幻想卿シナリオ</p>
 </div>
 </details>
 
@@ -866,7 +868,7 @@ async function startGame(){
             "げんそう": [2,0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1],
             "空白": [1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1],
         };
-    } else if (selectedPatchGlobal === "1.8+輝針城"){
+    } else {
         typesList = ["ゆめ", "おばけ", "ひこう", "けもの", "しょうき", "はがね", "あんこく", "だいち", "ほのお", "みず", "かぜ", "しぜん", "こおり", "しんとう", "ことわり", "こころ", "げんそう", "空白"];
         
         originalTypeChart = {
