@@ -19,7 +19,7 @@ window.customCsvData =`name,type1,type2,baseH,baseA,baseB,baseC,baseD,baseS,MinL
 すいか,だいち,,120,80,80,70,120,70,50,53,格闘ゲーム,一般,,,,https://w.atwiki.jp/touhoupuppetshow2/pages/164.html
 ミスティア,ひこう,,75,100,70,70,80,115,50,53,永夜抄,一般,,,,https://w.atwiki.jp/touhoupuppetshow2/pages/290.html
 みのりこ,しぜん,,90,50,70,105,80,85,50,53,風神録,一般,,,,https://w.atwiki.jp/touhoupuppetshow2/pages/201.html
-けいね,ことわり,はがね,80,60,80,110,90,90,50,53,妖々夢,一般,,,,https://w.atwiki.jp/touhoupuppetshow2/pages/129.html
+けいね,ことわり,はがね,80,60,80,110,90,90,50,53,永夜抄,一般,,,,https://w.atwiki.jp/touhoupuppetshow2/pages/129.html
 Aけいね,けもの,だいち,85,130,70,60,70,105,50,53,妖々夢,一般,,,,https://w.atwiki.jp/touhoupuppetshow2/pages/37.html
 いく,かぜ,,90,70,80,130,90,70,50,53,格闘ゲーム,一般,,,,https://w.atwiki.jp/touhoupuppetshow2/pages/123.html
 こいし,こころ,ゆめ,120,70,100,80,100,80,50,53,地霊殿,一般,,,,https://w.atwiki.jp/touhoupuppetshow2/pages/150.html
@@ -44,7 +44,7 @@ Aけいね,けもの,だいち,85,130,70,60,70,105,50,53,妖々夢,一般,,,,htt
 にとり,みず,かぜ,70,75,80,110,100,85,50,53,風神録,一般,,,,https://w.atwiki.jp/touhoupuppetshow2/pages/82.html
 ひな,しょうき,,110,75,90,75,90,50,50,53,風神録,一般,,,,https://w.atwiki.jp/touhoupuppetshow2/pages/185.html
 こまち,みず,,90,80,90,110,90,70,50,53,花映塚,一般,,,,https://w.atwiki.jp/touhoupuppetshow2/pages/170.html
-ゆゆこ,おばけ,しぜん,105,80,75,120,80,90,50,53,永夜抄,一般,,,,https://w.atwiki.jp/touhoupuppetshow2/pages/138.html
+ゆゆこ,おばけ,しぜん,105,80,75,120,80,90,50,53,妖々夢,一般,,,,https://w.atwiki.jp/touhoupuppetshow2/pages/138.html
 めいりん,ゆめ,,90,115,95,60,60,90,50,53,紅魔郷,一般,,,,https://w.atwiki.jp/touhoupuppetshow2/pages/41.html
 さくや,はがね,ことわり,80,110,80,80,80,100,50,53,紅魔郷,一般,,,,https://w.atwiki.jp/touhoupuppetshow2/pages/62.html
 ルナサ,おばけ,しょうき,100,75,100,80,100,45,50,53,妖々夢,一般,,,,https://w.atwiki.jp/touhoupuppetshow2/pages/145.html
