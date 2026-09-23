@@ -20,7 +20,7 @@ window.customCsvData =`name,type1,type2,baseH,baseA,baseB,baseC,baseD,baseS,MinL
 ミスティア,ひこう,,75,100,70,70,80,115,50,53,永夜抄,一般,,,,https://w.atwiki.jp/touhoupuppetshow2/pages/290.html
 みのりこ,しぜん,,90,50,70,105,80,85,50,53,風神録,一般,,,,https://w.atwiki.jp/touhoupuppetshow2/pages/201.html
 けいね,ことわり,はがね,80,60,80,110,90,90,50,53,永夜抄,一般,,,,https://w.atwiki.jp/touhoupuppetshow2/pages/129.html
-Aけいね,けもの,だいち,85,130,70,60,70,105,50,53,妖々夢,一般,,,,https://w.atwiki.jp/touhoupuppetshow2/pages/37.html
+Aけいね,けもの,だいち,85,130,70,60,70,105,50,53,永夜抄,一般,,,,https://w.atwiki.jp/touhoupuppetshow2/pages/37.html
 いく,かぜ,,90,70,80,130,90,70,50,53,格闘ゲーム,一般,,,,https://w.atwiki.jp/touhoupuppetshow2/pages/123.html
 こいし,こころ,ゆめ,120,70,100,80,100,80,50,53,地霊殿,一般,,,,https://w.atwiki.jp/touhoupuppetshow2/pages/150.html
 ヤマメ,しょうき,だいち,105,80,100,60,95,50,50,53,地霊殿,一般,,,,https://w.atwiki.jp/touhoupuppetshow2/pages/212.html
