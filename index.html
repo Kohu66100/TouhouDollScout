@@ -579,6 +579,53 @@ select {
     padding: 10px;
 }
 
+.patch-nav-container {
+    margin-top: 40px;
+    padding: 20px 10px;
+    background-color: #f8f9fa;
+    border-top: 2px solid #e9ecef;
+    text-align: center;
+}
+
+.patch-nav-title {
+    font-size: 14px;
+    font-weight: bold;
+    color: #6c757d;
+    margin-bottom: 12px;
+}
+
+.patch-nav-links {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    flex-wrap: wrap;
+}
+
+.patch-nav-btn {
+    display: inline-block;
+    padding: 8px 16px;
+    font-size: 14px;
+    color: #495057;
+    background-color: #ffffff;
+    border: 1px solid #ced4da;
+    border-radius: 4px;
+    text-decoration: none;
+    transition: all 0.2s ease;
+}
+
+.patch-nav-btn:hover {
+    background-color: #e9ecef;
+    border-color: #adb5bd;
+    color: #212529;
+}
+
+.patch-nav-btn.active {
+    background-color: #0d6efd;
+    color: #ffffff;
+    border-color: #0d6efd;
+    font-weight: bold;
+}
+
 </style>
 </head>
 <body>
@@ -764,6 +811,15 @@ select {
 </div>
 </details>
 
+<div id="patchNavigation" class="patch-nav-container">
+    <div class="patch-nav-title">リンク</div>
+    <div class="patch-nav-links">
+        <a href="https://kohu66100.github.io/VegaScout/" class="patch-nav-btn active">ベガスカウト</a>
+        <a href="https://kohu66100.github.io/MMScout/" class="patch-nav-btn active">MMスカウト</a>
+        <a href="https://kohu66100.github.io/TouhouDollScout/" class="patch-nav-btn active">人形劇スカウト</a>
+    </div>
+</div>
+
 <script>
 let characterTable = [];
 let remainingCharacters = [];
@@ -785,6 +841,8 @@ const submitBtn = document.getElementById('submitBtn');
 const resultTable = document.getElementById('resultTable');
 const headerRow = document.getElementById('headerRow');
 const resultBody = document.getElementById('resultBody');
+
+const FALLBACK_ICON_PATH = `images/item/モンスターボール.png`;
 
 let typesList  = [];
 let originalTypeChart  = [];
@@ -829,6 +887,9 @@ async function startGame(){
 
         if (window.customCsvData) {
             characterTable = parseCSV(window.customCsvData);
+            if (activeRules.includes("factoryMode")){
+                //await validateCharaDmpFiles(characterTable, selectedPatchGlobal);
+            }
         } else {
             alert("データが見つかりませんでした。");
             return;
@@ -1442,7 +1503,7 @@ function createTypeBadge(typeName) {
     return badge;
 }
 
-function copyResult(){
+async function copyResult(){
     // 各キャラクターのnameの後ろに、styleFormがあればカッコ付きで追加する
     const text = selectedCharacters.map((char, index) => {
         // styleFormが存在し、かつ空文字でなければ「（形式）」を後ろに付ける
@@ -1469,6 +1530,9 @@ function copyResult(){
             alert("コピーに失敗しました");
         }
         document.body.removeChild(textarea);
+    }
+    if (activeRules.includes("factoryMode") && selectedPatchGlobal === "風分離") {
+        await dumpFile(selectedCharacters);
     }
 }
 
@@ -1796,6 +1860,234 @@ document.getElementById("cancelAllGeneration").addEventListener("click", () => {
         cb.checked = false;
     });
 });
+
+async function dumpFile(charData) {
+    // 設定：固定の空白枠（100byte）のデータ（後ろから15番目がFF、他は00）
+    const emptyDumpStr = "00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 FF 00 00 00 00 00 00 00 00 00 00 00 00 00 00";
+    
+    // 16進数文字列を Uint8Array（100バイト）に変換するヘルパー関数
+    function hexStringToBytes(hexStr) {
+        return new Uint8Array(hexStr.trim().split(/\s+/).map(h => parseInt(h, 16)));
+    }
+    
+    const emptyBytes = hexStringToBytes(emptyDumpStr);
+
+    // 選択されたキャラクター（selectedCharacters）のチェック
+    if (!charData || charData.length === 0) {
+        console.error("スカウトされたキャラクター（selectedCharacters）が見つかりません。");
+        return;
+    }
+
+    const totalChars = charData.length;
+    // 6体単位で区切ったときの必要チャンク（ブロック）数を計算
+    const chunkCount = Math.ceil(totalChars / 6); 
+    const totalBytesCount = chunkCount * 600;
+
+    // 出力用の巨大なUint8Arrayを作成
+    const resultBinary = new Uint8Array(totalBytesCount);
+
+    console.log(`【バイナリ出力開始】 キャラクター数: ${totalChars}体 -> ${chunkCount}グループ (${totalBytesCount}バイト)`);
+
+    // 1体ごとに factoryDB/(作品名)/(dump).DMP を読み出す関数
+    async function fetchCharaDmp(char) {
+        // dump が存在すればそれを使用し、無ければ char.name を使用（フォールバック）
+        const filename = char ? (char.dump || char.name) : null;
+        if (!filename) return emptyBytes;
+        
+        // パス例: factoryDB/ベガ/リーテイル_2.DMP
+        const filePath = `factoryDB/${selectedPatchGlobal}/${filename}.DMP`;
+        try {
+            const response = await fetch(filePath);
+            if (!response.ok) {
+                console.warn(`警告: ${filePath} の取得に失敗しました(Status: ${response.status})。空白枠を使用します。`);
+                return emptyBytes;
+            }
+            const buffer = await response.arrayBuffer();
+            const bytes = new Uint8Array(buffer);
+            
+            if (bytes.length === 100) {
+                return bytes;
+            } else if (bytes.length > 100) {
+                //console.warn(`警告: ${filename}.DMP が100byteを超えています(${bytes.length}byte)。切り詰めます。`);
+                return bytes.subarray(0, 100);
+            } else {
+                console.warn(`警告: ${filename}.DMP が100byte未満です(${bytes.length}byte)。残りを0埋めします。`);
+                const padded = new Uint8Array(100);
+                padded.set(bytes);
+                return padded;
+            }
+        } catch (e) {
+            console.warn(`エラー: ${filePath} の読み込み中に例外が発生しました。`, e);
+            return emptyBytes;
+        }
+    }
+
+    // 全キャラクターのDMPファイルを並列で取得
+    const loadedDmpList = await Promise.all(charData.map(char => fetchCharaDmp(char)));
+
+    let byteOffset = 0;
+
+    // 6体ずつのグループに分けてバイナリ配列に配置
+    for (let chunkIndex = 0; chunkIndex < chunkCount; chunkIndex++) {
+        for (let memberIndex = 0; memberIndex < 6; memberIndex++) {
+            const charIndex = chunkIndex * 6 + memberIndex;
+
+            if (charIndex < totalChars) {
+                const charBytes = loadedDmpList[charIndex];
+                resultBinary.set(charBytes, byteOffset);
+            } else {
+                // 6体に満たない空き枠の場合
+                resultBinary.set(emptyBytes, byteOffset);
+            }
+            byteOffset += 100;
+        }
+    }
+
+    // 16進数文字列テキストとしてコンソール表示用フォーマット
+    const hexResultArray = [];
+    resultBinary.forEach(b => {
+        hexResultArray.push(b.toString(16).toUpperCase().padStart(2, '0'));
+    });
+    
+    let formattedHexText = "";
+    // 600バイト（6体分）ずつループを回す
+    for (let chunkStart = 0; chunkStart < hexResultArray.length; chunkStart += 600) {
+        const chunkSlice = hexResultArray.slice(chunkStart, chunkStart + 600);
+        
+        // 1つのグループの中を16バイトごとに改行して並べる
+        for (let i = 0; i < chunkSlice.length; i += 16) {
+            formattedHexText += chunkSlice.slice(i, i + 16).join(" ") + "\n";
+        }
+        
+        // 次のグループがある場合のみ、区切りの空白行（空行）を追加する
+        if (chunkStart + 600 < hexResultArray.length) {
+            formattedHexText += "\n"; 
+        }
+    }
+
+    console.log("%c▼ 手持ちデータ (コピー用)", "color: #2c3e50; font-weight: bold; font-size: 14px;");
+    console.log(formattedHexText);
+
+    if (byteOffset <= 600){
+        // そのままバイナリファイルとしてダウンロードできるリンクをコンソールに生成
+        const blob = new Blob([resultBinary], { type: "application/octet-stream" });
+        const url = URL.createObjectURL(blob);
+        
+        console.log("%c▼ バイナリファイルとしてダウンロード", "color: #27ae60; font-weight: bold; font-size: 14px;");
+        //console.log(`右のリンクをクリックして保存してください: ${url}`);
+        console.log("downloadScoutData() を実行すると保存されます。");
+
+        // グローバルに関数を登録して、すぐダウンロードできるようにする
+        window.downloadScoutData = () => {
+            const a = document.createElement("a");
+            a.href = url;
+            a.download = `scout_${totalChars}chars.DMP`;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+        };
+        
+        // 自動ダウンロードを実行したい場合はコメントアウトを解除してください
+        //window.downloadScoutData();
+    }else{
+        console.log("バイナリファイルのダウンロードは6体以下限定です");
+    }
+}
+
+/**
+ * キャラクターテーブル内の全キャラクターの DMP ファイルの存在およびサイズ(100byte)をチェックする関数
+ * @param {Array} characterTable - チェック対象のキャラクターオブジェクト配列
+ * @param {string} [targetPatch] - 作品名（省略した場合は selectedPatchGlobal または 'ベガ' を使用）
+ * @returns {Promise<Object>} 検証結果オブジェクト (ok, notFound, invalidSize, error)
+ */
+async function validateCharaDmpFiles(characterTable, targetPatch) {
+    const patch = targetPatch || (typeof selectedPatchGlobal !== 'undefined' ? selectedPatchGlobal : 'ベガ');
+    
+    // 引数で渡された characterTable をチェック（未指定の場合は空配列扱い）
+    const charList = Array.isArray(characterTable) ? characterTable : [];
+    
+    if (charList.length === 0) {
+        console.error("validateCharaDmpFiles: 有効な characterTable が渡されなかったか、データが空です。");
+        return null;
+    }
+
+    console.log(`%c【DMPファイル検証開始】 作品: ${patch} / 対象数: ${charList.length}体`, "color: #0d6efd; font-weight: bold; font-size: 14px;");
+
+    const results = {
+        ok: [],
+        notFound: [],
+        invalidSize: [],
+        error: []
+    };
+
+    // 並列で全キャラクターのDMPファイルをチェック
+    await Promise.all(charList.map(async (char) => {
+        const filename = char.dump;
+        if (!filename) {
+            results.error.push({ name: char.name || "不明", reason: "dumpfilename/nameが未定義" });
+            return;
+        }
+
+        const filePath = `factoryDB/${patch}/${filename}.DMP`;
+
+        try {
+            const response = await fetch(filePath, { method: 'GET' });
+            
+            if (!response.ok) {
+                results.notFound.push({ name: char.name, filename: `${filename}.DMP`, status: response.status });
+                return;
+            }
+
+            const buffer = await response.arrayBuffer();
+            const size = buffer.byteLength;
+
+            if (size === 600) {
+                results.ok.push({ name: char.name, filename: `${filename}.DMP` });
+            } else {
+                results.invalidSize.push({ name: char.name, filename: `${filename}.DMP`, actualSize: size });
+            }
+        } catch (e) {
+            results.error.push({ name: char.name, filename: `${filename}.DMP`, error: e.message });
+        }
+    }));
+
+    // 結果の出力
+    console.group("【検証結果サマリー】");
+    console.log(`✅ 正常 (100byte): ${results.ok.length} 件`);
+    console.log(`❌ 未発見 (404等): ${results.notFound.length} 件`);
+    console.log(`⚠️ サイズ不正 (600byte以外): ${results.invalidSize.length} 件`);
+    if (results.error.length > 0) {
+        console.log(`🚨 エラー: ${results.error.length} 件`);
+    }
+    console.groupEnd();
+
+    // エラー詳細のログ表示
+    if (results.notFound.length > 0) {
+        console.group("%c▼ 存在しないファイル一覧", "color: #dc3545; font-weight: bold;");
+        results.notFound.forEach(item => {
+            console.log(`・キャラクター: ${item.name} -> ファイル名: ${item.filename} (Status: ${item.status})`);
+        });
+        console.groupEnd();
+    }
+
+    if (results.invalidSize.length > 0) {
+        console.group("%c▼ サイズが100byteではないファイル一覧", "color: #ffc107; font-weight: bold;");
+        results.invalidSize.forEach(item => {
+            console.log(`・キャラクター: ${item.name} -> ファイル名: ${item.filename} (実際のサイズ: ${item.actualSize} byte)`);
+        });
+        console.groupEnd();
+    }
+
+    if (results.error.length > 0) {
+        console.group("%c▼ 通信・例外エラー一覧", "color: #6c757d; font-weight: bold;");
+        results.error.forEach(item => {
+            console.log(`・キャラクター: ${item.name} -> ${item.error || item.reason}`);
+        });
+        console.groupEnd();
+    }
+
+    return results;
+}
 
 </script>
 
