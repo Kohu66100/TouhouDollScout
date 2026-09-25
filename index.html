@@ -888,7 +888,7 @@ async function startGame(){
         if (window.customCsvData) {
             characterTable = parseCSV(window.customCsvData);
             if (activeRules.includes("factoryMode")){
-                //await validateCharaDmpFiles(characterTable, selectedPatchGlobal);
+                await validateCharaDmpFiles(characterTable, selectedPatchGlobal);
             }
         } else {
             alert("データが見つかりませんでした。");
