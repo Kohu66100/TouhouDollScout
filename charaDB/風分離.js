@@ -19,8 +19,8 @@ window.customCsvData =`name,type1,type2,baseH,baseA,baseB,baseC,baseD,baseS,MinL
 すいか,だいち,,120,80,80,70,120,70,50,53,格闘ゲーム,一般,,,,https://seesaawiki.jp/kazebunri/d/%A4%B9%A4%A4%A4%AB
 ミスティア,ひこう,,75,110,70,60,80,115,50,53,永夜抄,一般,,,,https://seesaawiki.jp/kazebunri/d/%A5%DF%A5%B9%A5%C6%A5%A3%A5%A2
 みのりこ,しぜん,,90,50,70,105,80,85,50,53,風神録,一般,,,,https://seesaawiki.jp/kazebunri/d/%A4%DF%A4%CE%A4%EA%A4%B3
-けいね,ことわり,はがね,80,60,80,110,90,90,50,53,妖々夢,一般,,,,https://seesaawiki.jp/kazebunri/d/%A4%B1%A4%A4%A4%CD
-Aけいね,けもの,だいち,85,130,70,60,70,105,50,53,妖々夢,一般,,,,https://seesaawiki.jp/kazebunri/d/A%A4%B1%A4%A4%A4%CD
+けいね,ことわり,はがね,80,60,80,110,90,90,50,53,永夜抄,一般,,,,https://seesaawiki.jp/kazebunri/d/%A4%B1%A4%A4%A4%CD
+Aけいね,けもの,だいち,85,130,70,60,70,105,50,53,永夜抄,一般,,,,https://seesaawiki.jp/kazebunri/d/A%A4%B1%A4%A4%A4%CD
 いく,でんき,かぜ,90,70,80,130,90,70,50,53,格闘ゲーム,一般,,,,https://seesaawiki.jp/kazebunri/d/%A4%A4%A4%AF
 こいし,こころ,ゆめ,120,70,100,80,100,80,50,53,地霊殿,一般,,,,https://seesaawiki.jp/kazebunri/d/%A4%B3%A4%A4%A4%B7
 ヤマメ,しょうき,だいち,105,80,100,60,95,50,50,53,地霊殿,一般,,,,https://seesaawiki.jp/kazebunri/d/%A5%E4%A5%DE%A5%E1
@@ -44,7 +44,7 @@ Aけいね,けもの,だいち,85,130,70,60,70,105,50,53,妖々夢,一般,,,,htt
 にとり,みず,でんき,70,75,80,110,100,85,50,53,風神録,一般,,,,https://seesaawiki.jp/kazebunri/d/%A4%CB%A4%C8%A4%EA
 ひな,しょうき,,110,75,90,75,90,50,50,53,風神録,一般,,,,https://seesaawiki.jp/kazebunri/d/%A4%D2%A4%CA
 こまち,みず,,90,80,90,110,90,70,50,53,花映塚,一般,,,,https://seesaawiki.jp/kazebunri/d/%A4%B3%A4%DE%A4%C1
-ゆゆこ,おばけ,しぜん,105,80,75,120,80,90,50,53,永夜抄,一般,,,,https://seesaawiki.jp/kazebunri/d/%A4%E6%A4%E6%A4%B3
+ゆゆこ,おばけ,しぜん,105,80,75,120,80,90,50,53,妖々夢,一般,,,,https://seesaawiki.jp/kazebunri/d/%A4%E6%A4%E6%A4%B3
 めいりん,ゆめ,,90,130,95,40,60,95,50,53,紅魔郷,一般,,,,https://seesaawiki.jp/kazebunri/d/%A4%E1%A4%A4%A4%EA%A4%F3
 さくや,はがね,ことわり,80,110,80,80,80,100,50,53,紅魔郷,一般,,,,https://seesaawiki.jp/kazebunri/d/%A4%B5%A4%AF%A4%E4
 ルナサ,おばけ,しょうき,100,75,100,80,100,45,50,53,妖々夢,一般,,,,https://seesaawiki.jp/kazebunri/d/%A5%EB%A5%CA%A5%B5
@@ -59,7 +59,7 @@ Aけいね,けもの,だいち,85,130,70,60,70,105,50,53,妖々夢,一般,,,,htt
 ルナ,でんき,しぜん,65,55,65,100,65,130,50,53,書籍,一般,,,,https://seesaawiki.jp/kazebunri/d/%A5%EB%A5%CA
 スター,みず,しぜん,90,50,80,80,120,60,50,53,書籍,一般,,,,https://seesaawiki.jp/kazebunri/d/%A5%B9%A5%BF%A1%BC
 ゆうか,しぜん,,120,100,100,70,100,50,50,53,花映塚,一般,,,,https://seesaawiki.jp/kazebunri/d/%A4%E6%A4%A6%A4%AB
-あや,ひこう,かぜ,85,90,90,65,90,110,50,53,花映塚,一般,,,,https://seesaawiki.jp/kazebunri/d/%A4%A2%A4%E4
+あや,ひこう,かぜ,85,90,90,65,90,110,50,53,風神録,一般,,,,https://seesaawiki.jp/kazebunri/d/%A4%A2%A4%E4
 えいき,ことわり,しんとう,90,70,90,110,95,100,50,53,花映塚,一般,,,,https://seesaawiki.jp/kazebunri/d/%A4%A8%A4%A4%A4%AD
 しょう,しんとう,でんき,80,70,120,120,90,60,50,53,星蓮船,一般,,,,https://seesaawiki.jp/kazebunri/d/%A4%B7%A4%E7%A4%A6
 リグル,しぜん,ひこう,95,120,70,50,70,95,50,53,永夜抄,一般,,,,https://seesaawiki.jp/kazebunri/d/%A5%EA%A5%B0%A5%EB
@@ -194,7 +194,7 @@ Aナズー,けもの,はがね,80,110,75,40,100,95,50,53,星蓮船,一般,,,,htt
 Tキスメ,ほのお,みず,75,60,115,105,75,50,50,53,地霊殿,一般,,,,https://seesaawiki.jp/kazebunri/d/T%A5%AD%A5%B9%A5%E1
 Sりん,けもの,ほのお,70,105,65,80,70,130,50,53,地霊殿,一般,,,,https://seesaawiki.jp/kazebunri/d/S%A4%EA%A4%F3
 Aりん,おばけ,ほのお,70,90,70,120,65,105,50,53,地霊殿,一般,,,,https://seesaawiki.jp/kazebunri/d/A%A4%EA%A4%F3
-ゾンビF,しぜん,ひこう,#N/A,#N/A,#N/A,#N/A,#N/A,#N/A,50,53,地霊殿,除外,,,,https://seesaawiki.jp/kazebunri/d/%A5%BE%A5%F3%A5%D3%A3%C6
+ゾンビF,しぜん,ひこう,1,70,40,80,40,50,50,53,地霊殿,除外,,,,https://seesaawiki.jp/kazebunri/d/%A5%BE%A5%F3%A5%D3%A3%C6
 Dいく,でんき,,100,70,90,90,125,55,50,53,格闘ゲーム,一般,,,,https://seesaawiki.jp/kazebunri/d/D%A4%A4%A4%AF
 Tいく,でんき,かぜ,85,110,105,70,80,80,50,53,格闘ゲーム,一般,,,,https://seesaawiki.jp/kazebunri/d/T%A4%A4%A4%AF
 Aみのりこ,しぜん,だいち,85,45,80,135,80,55,50,53,風神録,一般,,,,https://seesaawiki.jp/kazebunri/d/A%A4%DF%A4%CE%A4%EA%A4%B3
@@ -298,7 +298,7 @@ Tかせん,だいち,かぜ,90,80,90,110,65,105,50,53,書籍,一般,,,,https://s
 Dみとり,みず,あんこく,90,80,100,100,100,90,50,53,その他,一般,,,,https://seesaawiki.jp/kazebunri/d/D%A4%DF%A4%C8%A4%EA
 さーしゃ,だいち,おばけ,85,60,65,130,100,100,50,53,その他,一般,,,,https://seesaawiki.jp/kazebunri/d/%A4%B5%A1%BC%A4%B7%A4%E3
 Tさーしゃ,こおり,しょうき,110,110,70,80,100,70,50,53,その他,一般,,,,https://seesaawiki.jp/kazebunri/d/T%A4%B5%A1%BC%A4%B7%A4%E3
-JKさなえ,かぜ,,#N/A,#N/A,#N/A,#N/A,#N/A,#N/A,50,53,風神録,一般,,,,https://seesaawiki.jp/kazebunri/d/%A3%CA%A3%CB%A4%B5%A4%CA%A4%A8
+JKさなえ,かぜ,,65,80,70,120,100,65,50,53,風神録,一般,,,,https://seesaawiki.jp/kazebunri/d/%A3%CA%A3%CB%A4%B5%A4%CA%A4%A8
 Dこあくま,ことわり,げんそう,95,30,120,90,85,60,50,53,紅魔郷,一般,,,,https://seesaawiki.jp/kazebunri/d/D%A4%B3%A4%A2%A4%AF%A4%DE
 Aルナサ,おばけ,しょうき,60,65,60,130,75,110,50,53,妖々夢,一般,,,,https://seesaawiki.jp/kazebunri/d/A%A5%EB%A5%CA%A5%B5
 Sメルラン,おばけ,こころ,60,85,60,105,60,130,50,53,妖々夢,一般,,,,https://seesaawiki.jp/kazebunri/d/S%A5%E1%A5%EB%A5%E9%A5%F3
