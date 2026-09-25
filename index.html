@@ -842,8 +842,6 @@ const resultTable = document.getElementById('resultTable');
 const headerRow = document.getElementById('headerRow');
 const resultBody = document.getElementById('resultBody');
 
-const FALLBACK_ICON_PATH = `images/item/モンスターボール.png`;
-
 let typesList  = [];
 let originalTypeChart  = [];
 let typeChart = null;
@@ -888,7 +886,7 @@ async function startGame(){
         if (window.customCsvData) {
             characterTable = parseCSV(window.customCsvData);
             if (activeRules.includes("factoryMode")){
-                await validateCharaDmpFiles(characterTable, selectedPatchGlobal);
+                //await validateCharaDmpFiles(characterTable, selectedPatchGlobal);
             }
         } else {
             alert("データが見つかりませんでした。");
